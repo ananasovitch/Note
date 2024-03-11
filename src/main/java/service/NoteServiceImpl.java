@@ -2,78 +2,90 @@ package service;
 
 import dao.Commands;
 import dao.NoteDao;
+import dao.NoteDaoImpl;
+import model.Note;
 
+import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+
+import static jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle.notes;
 
 public class NoteServiceImpl implements NoteService {
     private NoteDao noteDao;
-    private Scanner scanner;
-
-    public NoteServiceImpl(Scanner scanner) {
-        this.scanner = scanner;
-    }
 
     public NoteServiceImpl(NoteDao noteDao) {
         this.noteDao = noteDao;
     }
 
     @Override
-    public void help() {
+    public void start() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("Введите команду:");
+            Commands.printCommands();  // Используем метод printCommands из класса Commands для вывода списка доступных команд
 
+            String input = scanner.nextLine();
+
+            try {
+                Commands command = Commands.valueOf(input.toUpperCase());
+                switch (command) {
+                    case HELP:
+                        help();
+                        break;
+                    case NOTE_NEW:
+                        noteNew();
+                        break;
+                    case NOTE_LIST:
+                        noteList();
+                        break;
+                    case NOTE_REMOVE:
+                        noteRemove();
+                        break;
+                    case NOTE_EXPORT:
+                        noteExport();
+                        break;
+                    case EXIT:
+                        noteExit();
+                        return;
+                    default:
+                        System.out.println("Неизвестная команда");
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("Неизвестная команда");
+            }
+        }
     }
 
     @Override
-    public void newNote() {
+    public void help() {
+        Commands.printCommands();
+    }
+
+    @Override
+    public void noteNew() {
         noteDao.noteNew();
     }
 
     @Override
-    public void listNotes() {
-        noteDao.noteList();
+    public List<Note> noteList() {
+       return   noteDao.noteList();
+
+
     }
 
     @Override
-    public void removeNote() {
-        noteDao.noteRemove();
+    public void noteRemove() {
+       noteDao.noteRemove(); // Реализация удаления заметки
     }
 
     @Override
-    public void exportNotes() {
-        noteDao.noteExport();
+    public void noteExport() {
+       noteDao.noteExport(); // Реализация экспорта заметок
     }
 
-
-    public void start() {
-        Scanner scanner = new Scanner(System.in);
-        String command;
-        do {
-            System.out.println("Enter a command (help, new, list, remove, export, exit):");
-            command = scanner.nextLine().toLowerCase();
-            switch (command) {
-                case "help":
-                    Commands.printCommands(); // Отображение списка команд
-                    break;
-                case "new":
-                    newNote();
-                    break;
-                case "list":
-                    listNotes();
-                    break;
-                case "remove":
-                    removeNote();
-                    break;
-                case "export":
-                    exportNotes();
-                    break;
-                case "exit":
-                    System.out.println("Exiting...");
-                    break;
-                default:
-                    System.out.println("Unknown command");
-            }
-        } while (!command.equals("exit"));
+    @Override
+    public void noteExit() {
+        System.out.println("До свидания!");
     }
-
-
 }

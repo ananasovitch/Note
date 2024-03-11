@@ -1,51 +1,36 @@
 package model;
 
-
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 
 public class Note {
-    private static int idCounter = 0;
+    private static int lastId = 0;
     private int id;
     private String title;
     private String content;
+    private List<String> labels;
+    private LocalDateTime created;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Note note)) return false;
-        return Objects.equals(getTags(), note.getTags());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getTags());
-    }
-
-    private List<String> tags;
-    
-
-    private static List<Note> allNotes = new ArrayList<>();
-
-    public Note() {
-        this.id = generateId();
-    }
-
-    public Note(String title, String content) {
-        this.id = generateId();
+    public Note(int id, String title, String content, List<String> labels, LocalDateTime created) {
+        this.id = ++lastId;
         this.title = title;
         this.content = content;
-        allNotes.add(this);
+        this.labels = labels;
+        this.created = created;
     }
 
-    public <T> Note(int newId, String noteContent, List<T> list) {
+
+
+
+    // Генератор уникального ID для заметок
+    public static int generateId() {
+        return ++lastId;
     }
 
+    // Геттеры и сеттеры
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -64,25 +49,33 @@ public class Note {
         this.content = content;
     }
 
-    public static List<Note> getAllNotes() {
-        return allNotes;
+    public List<String> getLabels() {
+        return labels;
     }
 
-    private int generateId() {
-        return ++idCounter;
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    // Переопределение методов equals и hashCode для сравнения заметок по ID
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Note)) return false;
+        Note note = (Note) o;
+        return getId() == note.getId();
     }
 
     @Override
-    public String toString() {
-        return "Note{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                '}';
+    public int hashCode() {
+        return Objects.hash(getId());
     }
-
-    public List<String> getTags() {
-        return tags;
-}
-
 }

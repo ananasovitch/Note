@@ -1,97 +1,148 @@
 package dao;
 
 import model.Note;
+import service.NoteService;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle.notes;
+
+
 public class NoteDaoImpl implements NoteDao {
-    private List<Note> noteList = new ArrayList<>();
+
+    private List<Note> notes; // Список всех заметок
+
+    public NoteDaoImpl(List<Note> notes) {
+        this.notes = notes;
+    }
+
+    private NoteService noteService;
+
+    public NoteDaoImpl() {
+        this.noteService = noteService;
+    }
 
 
     @Override
     public void help() {
         System.out.println("Available commands:");
         Commands.printCommands();
-
     }
 
     @Override
     public void noteNew() {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите заметку:");
+        String content = scanner.nextLine();
 
-// Введите заметку
-        System.out.println("Enter note:");
-        String noteContent = scanner.nextLine();
-
-// Проверка на пустой ввод или менее 3 символов
-        if (noteContent.trim().isEmpty() || noteContent.length() < 3) {
-            System.out.println("Note should not be empty and length should be at least 3 characters.");
+        if (content.trim().isEmpty() || content.length() < 3) {
+            System.out.println("Слишком короткая заметка. Длина должна быть не менее 3 символов");
             return;
         }
 
+        System.out.println("Добавить метки? ");
+        String labelsInput = scanner.nextLine();
+
+        Pattern pattern = Pattern.compile("^[a-zA-Z ]+$");
+        Matcher matcher = pattern.matcher(labelsInput);
+        if (!matcher.matches()) {
+            System.out.println("Некорректные метки. Метки должны состоять из букв и разделяться пробелом.");
+            return;
+        }
+
+        Note note = new Note(Note.generateId(), "Заголовок", content, Arrays.asList(labelsInput.split(" ")), LocalDateTime.now());
+        notes.add(note);
+
+        System.out.println("Заметка добавлена");
     }
 
-    @Override
-    public void noteList() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите метки, чтобы отобразить определенные заметки или оставьте пустым для отображения всех заметок:");
-        String input = scanner.nextLine();
-        List<String> searchTags = Arrays.asList(input.split(";")); // Разделяем введенные метки на отдельные элементы по разделителю ";"
 
-        // Выводим на экран подходящий список заметок в требуемом формате
-        for (Note note : noteList) {
-            if (searchTags.isEmpty() || note.getTags().containsAll(searchTags)) {
-                System.out.print("{" + note.getId() + "}" + "#" + note.getContent() + " ");
-                for (String tag : note.getTags()) {
-                    System.out.print(tag + ";");
+    @Override
+    public List<Note> noteList() {
+        List<Note> matchingNotes = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Введите метки, чтобы отобразить определенные заметки или оставьте пустым для отображения всех заметок");
+        String labelsInput = scanner.nextLine();
+
+        Pattern pattern = Pattern.compile("^[a-zA-Z ]+$");
+        Matcher matcher = pattern.matcher(labelsInput);
+        if (!matcher.matches()) {
+            System.out.println("Неверные метки. Метки должны состоять из букв и разделяться пробелами.");
+            return matchingNotes;
+        }
+
+        if (labelsInput.trim().isEmpty()) {
+            return notes;
+        } else {
+            for (Note note : notes) {
+                List<String> noteLabels = note.getLabels();
+                boolean containsAllLabels = true;
+                for (String label : labelsInput.split(" ")) {
+                    if (!noteLabels.contains(label)) {
+                        containsAllLabels = false;
+                        break;
+                    }
                 }
-                System.out.println();
+                if (containsAllLabels) {
+                    matchingNotes.add(note);
+                }
             }
         }
+        return matchingNotes;
     }
 
     @Override
     public void noteRemove() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите ID удаляемой заметки:");
-        if (scanner.hasNextInt()) {
-            int id = scanner.nextInt();
-            Optional<Note> matchingNote = noteList.stream().filter(note -> note.getId() == id).findFirst();
-            if (matchingNote.isPresent()) {
-                noteList.remove(matchingNote.get());
-                System.out.println("Заметка с ID " + id + " удалена");
-            } else {
-                System.out.println("Заметка с ID " + id + " не найдена");
-            }
-        } else {
-            System.out.println("Ошибка: введенный ID не является числом");
-        }
+        System.out.println("Введите метку заметки, которую нужно удалить:");
+        String labelToRemove = scanner.nextLine();
 
+        boolean removed = false;
+        Iterator<Note> iterator = notes.iterator();
+        while (iterator.hasNext()) {
+            Note note = iterator.next();
+            if (note.getLabels().contains(labelToRemove)) {
+                iterator.remove();
+                System.out.println("Заметка с меткой " + labelToRemove + " удалена.");
+                removed = true;
+            }
+        }
+        if (!removed) {
+            System.out.println("Заметок с меткой " + labelToRemove + "не найдено.");
+        }
     }
 
     @Override
     public void noteExport() {
         String fileName = "notes_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd_HH:mm:ss")) + ".txt";
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            for (Note note : noteList) {
-                writer.write("{" + note.getId() + "}#" + note.getContent() + " ");
-                for (String tag : note.getTags()) {
-                    writer.write(tag + ";");
-                }
-                writer.newLine();
+            for (Note note : notes) {
+                writer.write("ID: " + note.getId() + "\n");
+                writer.write("Title: " + note.getTitle() + "\n");
+                writer.write("Content: " + note.getContent() + "\n");
+                writer.write("Labels: " + String.join(", ", note.getLabels()) + "\n");
+                writer.write("Created: " + note.getCreated() + "\n");
+                writer.write("\n");
             }
-            System.out.println("Заметки успешно экспортированы в файл: " + fileName);
+            System.out.println("Заметка экспортирована в файл: " + fileName);
         } catch (IOException e) {
-            System.out.println("Ошибка при экспорте заметок: " + e.getMessage());
+            System.out.println("Произошла ошибка при экспорте заметок в файл: " + e.getMessage());
         }
+    }
+
+
+    @Override
+    public void processUserCommand() {
+
     }
 
     @Override
@@ -102,14 +153,14 @@ public class NoteDaoImpl implements NoteDao {
 
     @Override
     public void addTagsToNote(int noteId, List<String> tags) {
-        for (Note note : noteList) {
-            if (note.getId() == noteId) {
-                note.getTags().addAll(tags);
-                System.out.println("Tags added to note with ID " + noteId);
-                return;
-            }
-        }
-        System.out.println("Note with ID " + noteId + " not found");
-    }
 
-}
+}}
+
+
+
+
+
+
+
+
+

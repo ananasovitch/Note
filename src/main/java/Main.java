@@ -5,10 +5,9 @@ import service.NoteServiceImpl;
 
 public class Main {
    public static void main(String[] args) {
-
-    NoteDao noteDao = new NoteDaoImpl();
-    NoteService noteService = new NoteServiceImpl(noteDao);
-
-        noteService.start(); // Запуск обработки команд пользователя
-}}
+      NoteDao noteDao = new NoteDaoImpl(); // Создание объекта класса, реализующего интерфейс NoteDao
+      NoteService noteService = new NoteServiceImpl(noteDao); // Создание объекта класса, реализующего интерфейс NoteService
+      noteService.start(); // Вызов метода start()
+   }
+}
 
