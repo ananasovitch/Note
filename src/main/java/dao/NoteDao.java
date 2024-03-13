@@ -10,15 +10,15 @@ public interface NoteDao {
 
     void noteNew();
 
-    List<Note> noteList();
+    void noteList();
 
     void noteRemove();
 
     void noteExport();
 
-    void processUserCommand();
+
 
     void noteExit();
-    void addTagsToNote(int noteId, List<String> tags);
+
 
 }

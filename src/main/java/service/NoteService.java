@@ -11,13 +11,14 @@ public interface NoteService {
     void noteNew();
 
 
-    List<Note> noteList();
+    void noteList();
 
 
     void noteRemove();
 
 
     void noteExport();
+
     void noteExit();
     void start();
 }

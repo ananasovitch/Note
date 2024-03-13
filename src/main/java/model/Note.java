@@ -1,81 +1,71 @@
 package model;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 public class Note {
-    private static int lastId = 0;
-    private int id;
-    private String title;
-    private String content;
-    private List<String> labels;
-    private LocalDateTime created;
+    // Статический список для хранения всех заметок
+    private static List<Note> allNotes = new ArrayList<>();
+    private static int idCounter = 0;
+    public int id;
+    public String content;
+    public List<String> labels;
 
-    public Note(int id, String title, String content, List<String> labels, LocalDateTime created) {
-        this.id = ++lastId;
-        this.title = title;
+
+    public Note(int i, String content, List<String> labels) {
+        this.id = generateId();
         this.content = content;
         this.labels = labels;
-        this.created = created;
+        // Добавляем новую заметку в список всех заметок
+        allNotes.add(this);
     }
 
 
 
 
-    // Генератор уникального ID для заметок
+    // Геттеры и сеттеры для полей класса
+
     public static int generateId() {
-        return ++lastId;
+        return ++idCounter;
     }
 
-    // Геттеры и сеттеры
+    public boolean hasLabels(List<String> checkLabels) {
+        return new HashSet<>(labels).containsAll(checkLabels);
+    }
+
     public int getId() {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    public String getLabelsAsString() {
+        return String.join(", ", labels);
     }
 
     public String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public List<String> getLabels() {
         return labels;
     }
 
-    public void setLabels(List<String> labels) {
-        this.labels = labels;
+    // Геттер для списка всех заметок
+    public static List<Note> getAllNotes() {
+
+        return allNotes;
     }
 
-    public LocalDateTime getCreated() {
-        return created;
+    public void setId(int newId) {
+        this.id = newId;
     }
 
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
+      public void setContent(String newContent) {
+        this.content = newContent;
     }
-
-    // Переопределение методов equals и hashCode для сравнения заметок по ID
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Note)) return false;
-        Note note = (Note) o;
-        return getId() == note.getId();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    public boolean containsAllLabels(List<String> labels) {
+        return new HashSet<>(this.labels).containsAll(labels);
     }
 }
+
+
