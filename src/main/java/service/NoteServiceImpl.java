@@ -1,9 +1,7 @@
 package service;
 
 import dao.NoteDao;
-import model.Note;
 
-import java.util.List;
 import java.util.Scanner;
 
 

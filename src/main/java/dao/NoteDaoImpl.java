@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 
 public class NoteDaoImpl implements NoteDao {
-    private Scanner scanner = new Scanner(System.in);
-    private  List<Note> allNotes = new ArrayList<>();
+    private final Scanner scanner = new Scanner(System.in);
+    private final List<Note> allNotes = new ArrayList<>();
 
     public NoteDaoImpl() {
     }
@@ -39,7 +39,7 @@ public class NoteDaoImpl implements NoteDao {
         System.out.println("Добавить метки? Метки состоят из одного слова и могут содержать только буквы.");
         String labelsInput = scanner.nextLine();
 
-        while (!isValidLabels(labelsInput)) {
+        while (isValidLabels(labelsInput)) {
             System.out.println("Некорректный формат меток. Метки должны состоять из слов, разделенных пробелами, и содержать только буквы.");
             System.out.println("Пожалуйста, введите метки:");
             labelsInput = scanner.nextLine();
@@ -48,7 +48,7 @@ public class NoteDaoImpl implements NoteDao {
         List<String> labels = Arrays.asList(labelsInput.split(" "));
 
         int newId = Note.generateId();
-        Note newNote = new Note(newId, content, labels);
+        Note newNote = new Note(content, labels);
         allNotes.add(newNote);
 
         System.out.println("Заметка добавлена");
@@ -57,7 +57,7 @@ public class NoteDaoImpl implements NoteDao {
     private boolean isValidLabels(String labelsInput) {
         Pattern pattern = Pattern.compile("^[A-Za-z\\s]+$");
         Matcher matcher = pattern.matcher(labelsInput);
-        return matcher.matches();
+        return !matcher.matches();
     }
 
 
@@ -73,7 +73,7 @@ public class NoteDaoImpl implements NoteDao {
         if(labelsInput.trim().isEmpty()) {
             filteredNotes = allNotes;
         } else {
-            while (!isValidLabels(labelsInput)) {
+            while (isValidLabels(labelsInput)) {
                 System.out.println("Некорректный формат меток. Метки должны состоять из слов, разделенных пробелами, и содержать только буквы.");
                 System.out.println("Пожалуйста, введите метки:");
                 labelsInput = scanner.nextLine();

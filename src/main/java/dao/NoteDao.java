@@ -1,10 +1,6 @@
 package dao;
 
 
-import model.Note;
-
-import java.util.List;
-
 public interface NoteDao {
     void help();
 

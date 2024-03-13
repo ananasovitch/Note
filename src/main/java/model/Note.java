@@ -6,14 +6,14 @@ import java.util.List;
 
 public class Note {
     // Статический список для хранения всех заметок
-    private static List<Note> allNotes = new ArrayList<>();
+    private static final List<Note> allNotes = new ArrayList<>();
     private static int idCounter = 0;
     public int id;
     public String content;
     public List<String> labels;
 
 
-    public Note(int i, String content, List<String> labels) {
+    public Note(String content, List<String> labels) {
         this.id = generateId();
         this.content = content;
         this.labels = labels;
@@ -26,16 +26,8 @@ public class Note {
         return ++idCounter;
     }
 
-    public boolean hasLabels(List<String> checkLabels) {
-        return new HashSet<>(labels).containsAll(checkLabels);
-    }
-
     public int getId() {
         return id;
-    }
-
-    public String getLabelsAsString() {
-        return String.join(", ", labels);
     }
 
     public String getContent() {
@@ -52,13 +44,6 @@ public class Note {
         return allNotes;
     }
 
-    public void setId(int newId) {
-        this.id = newId;
-    }
-
-      public void setContent(String newContent) {
-        this.content = newContent;
-    }
     public boolean containsAllLabels(List<String> labels) {
         return new HashSet<>(this.labels).containsAll(labels);
     }
