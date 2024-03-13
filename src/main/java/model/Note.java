@@ -20,10 +20,6 @@ public class Note {
         // Добавляем новую заметку в список всех заметок
         allNotes.add(this);
     }
-
-
-
-
     // Геттеры и сеттеры для полей класса
 
     public static int generateId() {

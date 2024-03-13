@@ -2,13 +2,19 @@ package dao;
 
 import model.Note;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class NoteDaoImpl implements NoteDao {
+    private Scanner scanner = new Scanner(System.in);
     private  List<Note> allNotes = new ArrayList<>();
+
     public NoteDaoImpl() {
     }
     @Override
@@ -81,6 +87,36 @@ public class NoteDaoImpl implements NoteDao {
         }
     }
 
+    @Override
+    public void noteRemove() {
+
+        System.out.println("Введите id удаляемой заметки:");
+        if (!scanner.hasNextInt()) { // проверка, что введено число
+            System.out.println("Ошибка: введено не число");
+            scanner.nextLine();
+            return;
+        }
+        int id = scanner.nextInt();
+        scanner.nextLine(); // съедаем оставшийся перевод строки
+
+        // Поиск заметки в списке
+        boolean removed = false;
+        Iterator<Note> iterator = allNotes.iterator();
+        while (iterator.hasNext()) {
+            Note note = iterator.next();
+            if (note.getId() == id) {
+                iterator.remove();
+                removed = true;
+                System.out.println("Заметка удалена успешно");
+                break;
+            }
+        }
+
+        if (!removed) {
+            System.out.println("Заметка с указанным id не найдена");
+        }
+    }
+
     private List<Note> filterNotesByLabels(List<String> labels) {
         List<Note> filteredNotes = new ArrayList<>();
         for (Note note : allNotes) {
@@ -91,19 +127,33 @@ public class NoteDaoImpl implements NoteDao {
         return filteredNotes;
     }
 
-    @Override
-    public void noteRemove() {
-
-    }
 
     @Override
     public void noteExport() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String fileName = "notes_" + sdf.format(new Date()) + ".txt";
 
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            for (Note note : Note.getAllNotes()) {
+                String line = "{" + note.getId() + "}#" + note.getContent() + " {" + String.join("; ", note.getLabels()) + "}";
+                writer.write(line);
+                writer.newLine();
+            }
+            System.out.println("Заметки успешно сохранены в файл " + fileName);
+        } catch (IOException e) {
+            System.out.println("Ошибка при сохранении заметок в файл: " + e.getMessage());
+        }
     }
+
+
+
+
 
     @Override
     public void noteExit() {
-
+// Завершение работы приложения
+        System.out.println("Работа приложения завершена.");
+        System.exit(0);
     }
 }
 

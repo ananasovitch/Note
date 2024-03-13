@@ -76,7 +76,7 @@ public class NoteServiceImpl implements NoteService {
                     running = false;
                     break;
                 default:
-                    System.out.println("Неверная команда");
+                    System.out.println("Команда не найдена");
             }
         }
         scanner.close();
