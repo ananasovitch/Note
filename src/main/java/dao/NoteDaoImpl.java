@@ -17,6 +17,7 @@ public class NoteDaoImpl implements NoteDao {
 
     public NoteDaoImpl() {
     }
+
     @Override
     public void help() {
         System.out.println("Available commands:");
@@ -61,8 +62,6 @@ public class NoteDaoImpl implements NoteDao {
     }
 
 
-
-
     @Override
     public void noteList() {
         Scanner scanner = new Scanner(System.in);
@@ -70,7 +69,7 @@ public class NoteDaoImpl implements NoteDao {
         String labelsInput = scanner.nextLine();
 
         List<Note> filteredNotes;
-        if(labelsInput.trim().isEmpty()) {
+        if (labelsInput.trim().isEmpty()) {
             filteredNotes = allNotes;
         } else {
             while (isValidLabels(labelsInput)) {
@@ -144,9 +143,6 @@ public class NoteDaoImpl implements NoteDao {
             System.out.println("Ошибка при сохранении заметок в файл: " + e.getMessage());
         }
     }
-
-
-
 
 
     @Override

@@ -17,7 +17,7 @@ public class Note {
         this.id = generateId();
         this.content = content;
         this.labels = labels;
-        // Добавляем новую заметку в список всех заметок
+        // Добавил новую заметку в список всех заметок
         allNotes.add(this);
     }
     // Геттеры и сеттеры для полей класса
@@ -40,7 +40,6 @@ public class Note {
 
     // Геттер для списка всех заметок
     public static List<Note> getAllNotes() {
-
         return allNotes;
     }
 

@@ -4,13 +4,10 @@ import dao.NoteDao;
 
 import java.util.Scanner;
 
-
-
 public class NoteServiceImpl implements NoteService {
     private final NoteDao noteDao;
 
     public NoteServiceImpl(NoteDao noteDao) {
-
         this.noteDao = noteDao;
     }
 
@@ -21,15 +18,13 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public void noteNew() {
-
         noteDao.noteNew();
     }
 
     @Override
-    public void noteList() {    // public List<Note> noteList() {
+    public void noteList() {
         noteDao.noteList();
     }
-
 
     @Override
     public void noteRemove() {
@@ -62,8 +57,7 @@ public class NoteServiceImpl implements NoteService {
                 case "noteList":
                     noteList();
                     break;
-
-                    case "noteRemove":
+                case "noteRemove":
                     noteRemove();
                     break;
                 case "noteExport":
