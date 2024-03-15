@@ -5,8 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class Note {
-    // Статический список для хранения всех заметок
-    private static final List<Note> allNotes = new ArrayList<>();
+    private static final List<Note> allNotes = new ArrayList<>(); // Статический список для хранения всех заметок
     private static int idCounter = 0;
     public int id;
     public String content;
@@ -17,10 +16,8 @@ public class Note {
         this.id = generateId();
         this.content = content;
         this.labels = labels;
-        // Добавил новую заметку в список всех заметок
-        allNotes.add(this);
+        allNotes.add(this);// Добавил новую заметку в список всех заметок
     }
-    // Геттеры и сеттеры для полей класса
 
     public static int generateId() {
         return ++idCounter;
@@ -38,7 +35,6 @@ public class Note {
         return labels;
     }
 
-    // Геттер для списка всех заметок
     public static List<Note> getAllNotes() {
         return allNotes;
     }

@@ -9,9 +9,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class NoteDaoImpl implements NoteDao {
+    public static final Logger logger = LoggerFactory.getLogger(NoteDaoImpl.class);
     private final Scanner scanner = new Scanner(System.in);
     private final List<Note> allNotes = new ArrayList<>();
 
@@ -20,39 +23,33 @@ public class NoteDaoImpl implements NoteDao {
 
     @Override
     public void help() {
-        System.out.println("Available commands:");
-        Commands.printCommands();
+        logger.info("доступные команды:");
+        Commands.printCommands();   //вспомогательный метод. надо логировать?
     }
-
-
     @Override
     public void noteNew() {
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Введите заметку:");
+        logger.info("Введите заметку:");
         String content = scanner.nextLine();
 
         while (content.length() < 3 || content.trim().isEmpty()) {
-            System.out.println("Заметка не может быть пустой и должна содержать не менее 3 символов. Пожалуйста, введите заметку:");
+            logger.info("Заметка не может быть пустой и должна содержать не менее 3 символов. Пожалуйста, введите заметку: Введено: {}", content);
             content = scanner.nextLine();
         }
-
-        System.out.println("Добавить метки? Метки состоят из одного слова и могут содержать только буквы.");
+        logger.info("Добавить метки? Метки состоят из одного слова и могут содержать только буквы.");
         String labelsInput = scanner.nextLine();
 
         while (isValidLabels(labelsInput)) {
-            System.out.println("Некорректный формат меток. Метки должны состоять из слов, разделенных пробелами, и содержать только буквы.");
-            System.out.println("Пожалуйста, введите метки:");
+            logger.info("Некорректный формат меток. Метки должны состоять из слов, разделенных пробелами, и содержать только буквы. Введено: {}", labelsInput);
+            logger.info("Пожалуйста, введите метки:");
             labelsInput = scanner.nextLine();
         }
 
         List<String> labels = Arrays.asList(labelsInput.split(" "));
 
-        int newId = Note.generateId();
         Note newNote = new Note(content, labels);
         allNotes.add(newNote);
-
-        System.out.println("Заметка добавлена");
+        logger.info("Заметка добавлена");
     }
 
     private boolean isValidLabels(String labelsInput) {
@@ -65,7 +62,7 @@ public class NoteDaoImpl implements NoteDao {
     @Override
     public void noteList() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите метки, чтобы отобразить определенные заметки или оставьте пустым для отображения всех заметок:");
+        logger.info("Введите метки, чтобы отобразить определенные заметки или оставьте пустым для отображения всех заметок:");
         String labelsInput = scanner.nextLine();
 
         List<Note> filteredNotes;
@@ -73,8 +70,8 @@ public class NoteDaoImpl implements NoteDao {
             filteredNotes = allNotes;
         } else {
             while (isValidLabels(labelsInput)) {
-                System.out.println("Некорректный формат меток. Метки должны состоять из слов, разделенных пробелами, и содержать только буквы.");
-                System.out.println("Пожалуйста, введите метки:");
+                logger.info("Метки должны быть разделены пробелом и содержать более 3 символов, введено: " + labelsInput);
+                logger.info("Пожалуйста, введите метки:");
                 labelsInput = scanner.nextLine();
             }
             List<String> labels = Arrays.asList(labelsInput.split(" "));
@@ -82,37 +79,34 @@ public class NoteDaoImpl implements NoteDao {
         }
 
         for (Note note : filteredNotes) {
-            System.out.print("{" + note.getId() + "}#" + note.getContent() + " " + note.getLabels() + "\n");
+            logger.info("{" + note.getId() + "}#" + note.getContent() + " " + note.getLabels());
         }
     }
 
     @Override
     public void noteRemove() {
-
-        System.out.println("Введите id удаляемой заметки:");
+        logger.info("Введите id удаляемой заметки:");
         if (!scanner.hasNextInt()) { // проверка, что введено число
-            System.out.println("Ошибка: введено не число");
+            logger.info("Ошибка, введено не число: " + scanner.nextLine());
             scanner.nextLine();
             return;
         }
         int id = scanner.nextInt();
-        scanner.nextLine(); // съедаем оставшийся перевод строки
-
-        // Поиск заметки в списке
-        boolean removed = false;
+        scanner.nextLine();
+        boolean removed = false;  // Поиск заметки в списке
         Iterator<Note> iterator = allNotes.iterator();
         while (iterator.hasNext()) {
             Note note = iterator.next();
             if (note.getId() == id) {
                 iterator.remove();
                 removed = true;
-                System.out.println("Заметка удалена успешно");
+                logger.info("Заметка удалена успешно");
                 break;
             }
         }
 
         if (!removed) {
-            System.out.println("Заметка с указанным id не найдена");
+            logger.info("Заметка с указанным id не найдена");
         }
     }
 
@@ -138,21 +132,17 @@ public class NoteDaoImpl implements NoteDao {
                 writer.write(line);
                 writer.newLine();
             }
-            System.out.println("Заметки успешно сохранены в файл " + fileName);
-        } catch (IOException e) {
-            System.out.println("Ошибка при сохранении заметок в файл: " + e.getMessage());
+            logger.info("Заметки успешно сохранены в файл: {}", fileName);
+                  } catch (IOException e) {
+            logger.warn("Ошибка при сохранении заметок в файл: {}", e.getMessage());
         }
     }
-
-
     @Override
-    public void noteExit() {
-// Завершение работы приложения
-        System.out.println("Работа приложения завершена.");
+    public void noteExit() {// Завершение работы приложения
+        logger.info("Работа приложения завершена.");
         System.exit(0);
     }
 }
-
 
 
 
