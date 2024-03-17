@@ -29,9 +29,10 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public void noteList() {
+    public boolean noteList() {
         logger.debug("вызвана команда note-list");
         noteDao.noteList();
+        return false;
     }
 
     @Override

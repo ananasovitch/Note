@@ -21,11 +21,11 @@ public class NoteDaoImpl implements NoteDao {
     public NoteDaoImpl() {
     }
 
-    @Override
+    @Override //вспомогательный метод. надо логировать?
     public void help() {
         logger.info("доступные команды:");
-        Commands.printCommands();   //вспомогательный метод. надо логировать?
-    }
+        Commands.printCommands();
+           }
     @Override
     public void noteNew() {
         Scanner scanner = new Scanner(System.in);
@@ -52,7 +52,7 @@ public class NoteDaoImpl implements NoteDao {
         logger.info("Заметка добавлена");
     }
 
-    private boolean isValidLabels(String labelsInput) {
+    boolean isValidLabels(String labelsInput) {
         Pattern pattern = Pattern.compile("^[A-Za-z\\s]+$");
         Matcher matcher = pattern.matcher(labelsInput);
         return !matcher.matches();
