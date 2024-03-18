@@ -2,7 +2,9 @@ package service;
 
 import dao.Commands;
 import dao.NoteDao;
+
 import java.util.Scanner;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,29 +66,29 @@ public class NoteServiceImpl implements NoteService {
             }
             String command = scanner.nextLine();
             switch (command) {
-                    case "help":
-                        help();
-                        break;
-                    case "note-new":
-                        noteNew();
-                        break;
-                    case "note-list":
-                        noteList();
-                        break;
-                    case "note-remove":
-                        noteRemove();
-                        break;
-                    case "note-export":
-                        noteExport();
-                        break;
-                    case "note-exit":
-                        noteExit();
-                        running = false;
-                        break;
-                    default:
-                        logger.info("Команда не найдена");
-                }
+                case "help":
+                    help();
+                    break;
+                case "note-new":
+                    noteNew();
+                    break;
+                case "note-list":
+                    noteList();
+                    break;
+                case "note-remove":
+                    noteRemove();
+                    break;
+                case "note-export":
+                    noteExport();
+                    break;
+                case "note-exit":
+                    noteExit();
+                    running = false;
+                    break;
+                default:
+                    logger.info("Команда не найдена");
             }
-            scanner.close();
         }
+        scanner.close();
     }
+}

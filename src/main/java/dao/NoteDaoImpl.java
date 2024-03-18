@@ -9,14 +9,15 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class NoteDaoImpl implements NoteDao {
     public static final Logger logger = LoggerFactory.getLogger(NoteDaoImpl.class);
-    private final Scanner scanner = new Scanner(System.in);
-    private final List<Note> allNotes = new ArrayList<>();
+    Scanner scanner = new Scanner(System.in);
+    List<Note> allNotes = new ArrayList<>();
 
     public NoteDaoImpl() {
     }
@@ -25,7 +26,8 @@ public class NoteDaoImpl implements NoteDao {
     public void help() {
         logger.info("доступные команды:");
         Commands.printCommands();
-           }
+    }
+
     @Override
     public void noteNew() {
         Scanner scanner = new Scanner(System.in);
@@ -83,10 +85,20 @@ public class NoteDaoImpl implements NoteDao {
         }
     }
 
+    protected List<Note> filterNotesByLabels(List<String> labels) {
+        List<Note> filteredNotes = new ArrayList<>();
+        for (Note note : allNotes) {
+            if (note.containsAllLabels(labels)) {
+                filteredNotes.add(note);
+            }
+        }
+        return filteredNotes;
+    }
+
     @Override
     public void noteRemove() {
         logger.info("Введите id удаляемой заметки:");
-        if (!scanner.hasNextInt()) { // проверка, что введено число
+        if (!scanner.hasNextInt()) {
             logger.info("Ошибка, введено не число: " + scanner.nextLine());
             scanner.nextLine();
             return;
@@ -110,16 +122,6 @@ public class NoteDaoImpl implements NoteDao {
         }
     }
 
-    private List<Note> filterNotesByLabels(List<String> labels) {
-        List<Note> filteredNotes = new ArrayList<>();
-        for (Note note : allNotes) {
-            if (note.containsAllLabels(labels)) {
-                filteredNotes.add(note);
-            }
-        }
-        return filteredNotes;
-    }
-
 
     @Override
     public void noteExport() {
@@ -133,12 +135,13 @@ public class NoteDaoImpl implements NoteDao {
                 writer.newLine();
             }
             logger.info("Заметки успешно сохранены в файл: {}", fileName);
-                  } catch (IOException e) {
+        } catch (IOException e) {
             logger.warn("Ошибка при сохранении заметок в файл: {}", e.getMessage());
         }
     }
+
     @Override
-    public void noteExit() {// Завершение работы приложения
+    public void noteExit() {
         logger.info("Работа приложения завершена.");
         System.exit(0);
     }

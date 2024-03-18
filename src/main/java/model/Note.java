@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class Note {
-    private static final List<Note> allNotes = new ArrayList<>(); // Статический список для хранения всех заметок
+    public static final List<Note> allNotes = new ArrayList<>(); // Статический список для хранения всех заметок
     private static int idCounter = 0;
     public int id;
     public String content;
