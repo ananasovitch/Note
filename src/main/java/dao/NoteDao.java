@@ -1,6 +1,11 @@
 package dao;
 
 
+import model.Note;
+
+import java.util.List;
+import java.util.Scanner;
+
 public interface NoteDao {
     void help();
     void noteNew();
@@ -8,6 +13,5 @@ public interface NoteDao {
     void noteRemove();
     void noteExport();
     void noteExit();
-
 
 }

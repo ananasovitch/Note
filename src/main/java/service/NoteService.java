@@ -1,5 +1,10 @@
 package service;
 
+import model.Note;
+
+import java.util.List;
+import java.util.Scanner;
+
 public interface NoteService {
     void help();
     void noteNew();

@@ -1,7 +1,6 @@
 package service;
 
 import dao.NoteDao;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,9 +35,10 @@ public class NoteServiceImplTest {
     @Test
     @DisplayName("Тест для метода noteList")
     public void testNoteList() {
-        when(noteService.noteList()).thenReturn(true);
-        boolean result = noteService.noteList();
-        Assertions.assertTrue(result);
+        doNothing().when(noteDao).noteList();
+
+        noteService.noteList();
+
         verify(noteDao).noteList();
     }
 
